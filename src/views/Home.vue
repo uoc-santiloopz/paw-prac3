@@ -5,7 +5,7 @@
         <h1>Listado de reservas</h1>
       </div>
     </div>
-    <div class="row hidden">
+    <div class="row d-none">
       <div class="col-xs-12">
         <a>Próximas 24 horas</a>
       </div>
@@ -25,12 +25,12 @@
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import ReservationList from '@/components/ReservationList.vue'
 
 export default {
   name: 'home',
   components: {
-    HelloWorld
+    ReservationList
   }
 }
 </script>
