@@ -18,7 +18,9 @@
         </div>
         <div class='row'>
           <div class='col-xs-12'>
-            <button class='btn btn-primary'>Crear reserva</button>
+            <router-link to="/create">
+                <button class='btn btn-primary'>Crear reserva</button>
+            </router-link>
           </div>
         </div>
     </div>
@@ -65,8 +67,8 @@ export default {
         this.fetchReservations24();
         this.fetchReservations();
     },
-    destroyed() {
-        this.interval.clearInterval();
+    beforeDestroy() {
+        clearInterval(this.interval);
     }
 }
 </script>
