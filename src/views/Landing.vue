@@ -12,19 +12,8 @@
         </div>
         <div class='row' id='reservationsTableContainer'>
           <div class='col-xs-12'>
-            <h3 v-if="!dades">No hay reservas que mostrar</h3>
-            <table v-else class="table">
-                <thead>
-                    <tr scope="col">
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr id="row">
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
+            <h3 v-if="!reservations">No hay reservas que mostrar</h3>
+            <ReservationList v-else :reservations="reservations"/>
           </div>
         </div>
         <div class='row'>
@@ -41,17 +30,31 @@ import ReservationList from '@/components/ReservationList.vue'
 import { API_ENDPOINTS } from '../shared/network/endpoints';
 
 export default {
-    name: 'Home',
-    data: () => ({
-        dades: null,
-    }),
+    name: 'Landing',
+    data() {
+        return {
+            reservations: null,
+            interval: null,
+        }
+    },
     components: {
         ReservationList
     },
+    methods: {
+        fetchReservations() {
+            axios
+                .get([process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.ALL_RESERVATIONS].join(''))
+                .then(res => this.reservations = res.data);
+        }
+    },
     created() {
-        axios
-            .get([process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.ALL_RESERVATIONS].join(''))
-            .then(res => this.dades = res.data);
+        this.interval = setInterval(() => {
+            this.fetchReservations();
+        }, 60000);
+        this.fetchReservations();
+    },
+    destroyed() {
+        this.interval.clearInterval();
     }
 }
 </script>
