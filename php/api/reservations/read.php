@@ -18,8 +18,6 @@
 
 	if ($num > 0) {
 	 	$reservations_array = array();
-	 	$reservations_array['status'] = 200;
-	 	$reservations_array['data'] = array();
 
 		while($row = $result->fetch(PDO::FETCH_ASSOC)) {
 			extract($row);
@@ -33,8 +31,8 @@
 				'guests' => $guests,
 				'comments' => $comments
 			);
-			
-			array_push($reservations_array['data'], $reservation_item);
+
+			array_push($reservations_array, $reservation_item);
 		}
 		echo json_encode($reservations_array);
 		
