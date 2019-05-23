@@ -28,6 +28,7 @@
 import * as axios from 'axios';
 import ReservationList from '@/components/ReservationList.vue'
 import { API_ENDPOINTS } from '../shared/network/endpoints';
+import { ReservationModel } from '../models/reservation.model';
 
 export default {
     name: 'Landing',
@@ -44,7 +45,7 @@ export default {
         fetchReservations() {
             axios
                 .get([process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.ALL_RESERVATIONS].join(''))
-                .then(res => this.reservations = res.data);
+                .then(res => this.reservations = res.data.map(res => new ReservationModel(res)));
         }
     },
     created() {
