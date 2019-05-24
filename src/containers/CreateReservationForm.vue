@@ -7,7 +7,7 @@
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <div class="alert alert-danger">
+                <div class="alert alert-danger" v-if="errorMessage.length">
                     <p>{{ errorMessage }}</p>
                 </div>
             </div>
@@ -100,6 +100,7 @@
     import flatPickr from 'vue-flatpickr-component';
     import 'flatpickr/dist/flatpickr.css';
     import 'flatpickr/dist/themes/material_blue.css';
+    import "normalize.css";
     import dayjs from 'dayjs';
 
     export default {
@@ -126,7 +127,7 @@
                     config: {
                         altFormat: 'M	j, Y',
                         altInput: true,
-                        dateFormat: 'Y-m-d',
+                        dateFormat: 'Y-m-d H:i',
                         enableTime: true
                     }
                 },
@@ -146,9 +147,13 @@
             },
             onSubmit() {
                 if(this.isFormValid()) {
-
-                } else {
-                    console.log('formNotValdid')
+                    const data = {
+                        name: this.name.value,
+                        surnames: this.surnames.value,
+                        phone: this.phone.value,
+                        date: dayjs(this.reservationDate.value).format('YYYY-MM-DD HH:mm:ss'),
+                        guests: this.guests.value
+                    }
                 }
             },
             isFormValid() {
@@ -172,7 +177,7 @@
             },
             validateDate() {
                 this.reservationDate.valid = true;
-                const date = dayjs(this.reservationDate.date);
+                const date = dayjs(this.reservationDate.value);
                 if (date.isBefore(dayjs())) {
                     this.reservationDate.valid = false;
                     this.errorMessage = 'La fecha es anterior a la fecha actual';
@@ -185,7 +190,10 @@
         }
     }
 </script>
-<style>
+<style lang="scss">
+    p {
+        margin: 0;
+    }
     .btn {
         user-select: none;
         cursor: pointer;
@@ -194,7 +202,8 @@
         border-radius: 3px;
         outline: none;
     }
-    .err {
+    .err,
+    .err ~ .form-control {
         outline: 1px solid red;
     }
 </style>

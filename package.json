@@ -12,6 +12,7 @@
     "bootstrap-vue": "^2.0.0-rc.20",
     "core-js": "^2.6.5",
     "dayjs": "^1.8.14",
+    "normalize.css": "^8.0.1",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-flatpickr-component": "^8.1.2",
