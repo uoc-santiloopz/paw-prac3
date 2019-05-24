@@ -97,11 +97,14 @@
     </div>
 </template>
 <script>
+    import axios from 'axios';
+    import dayjs from 'dayjs';
     import flatPickr from 'vue-flatpickr-component';
     import 'flatpickr/dist/flatpickr.css';
     import 'flatpickr/dist/themes/material_blue.css';
-    import "normalize.css";
-    import dayjs from 'dayjs';
+
+    import { API_ENDPOINTS } from '../shared/network/endpoints';
+
 
     export default {
         name: 'CreateReservationForm',
@@ -146,14 +149,21 @@
                 this.phone.value = event.target.value.replace(/[^0-9]/g, '');
             },
             onSubmit() {
+                this.errorMessage = '';
                 if(this.isFormValid()) {
-                    const data = {
+                    const body = {
                         name: this.name.value,
                         surnames: this.surnames.value,
                         phone: this.phone.value,
                         date: dayjs(this.reservationDate.value).format('YYYY-MM-DD HH:mm:ss'),
-                        guests: this.guests.value
-                    }
+                        guests: this.guestsAmount.value
+                    };
+                    axios.post(
+                        [process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.RESERVATIONS_CREATE].join(''),
+                        body
+                    )
+                        .catch(err => console.log(err))
+                        .then(res => console.log(res));
                 }
             },
             isFormValid() {

@@ -26,7 +26,6 @@
     </div>
 </template>
 <script>
-// @ is an alias to /src
 import * as axios from 'axios';
 import ReservationList from '@/components/ReservationList.vue'
 import { API_ENDPOINTS } from '../shared/network/endpoints';
