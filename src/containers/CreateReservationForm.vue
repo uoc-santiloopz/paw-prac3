@@ -162,8 +162,8 @@
                         [process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.RESERVATIONS_CREATE].join(''),
                         body
                     )
-                        .catch(err => console.log(err))
-                        .then(res => console.log(res));
+                        .catch(err => window.console.log(err))
+                        .then(() => this.$router.push('/'));
                 }
             },
             isFormValid() {
