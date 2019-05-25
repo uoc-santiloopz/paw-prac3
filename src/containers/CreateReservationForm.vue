@@ -48,29 +48,29 @@
                     <div class="form-group">
                         <label for="phone">Teléfono:</label>
                         <input
-                                id="phone"
-                                name="phone"
-                                v-model="phone.value"
-                                v-bind:class="{ err: !phone.valid }"
-                                @change="excludeLettersFromPhoneString"
-                                type="text"
-                                class="form-control"
-                                placeholder="Mi teléfono"
-                                minlength="9"
-                                required
+                            id="phone"
+                            name="phone"
+                            v-model="phone.value"
+                            v-bind:class="{ err: !phone.valid }"
+                            @change="excludeLettersFromPhoneString"
+                            type="text"
+                            class="form-control"
+                            placeholder="Mi teléfono"
+                            minlength="9"
+                            required
                         />
                     </div>
                     <div class="form-group">
                         <label class="description" for="datetime">Fecha y hora:</label>
                         <flat-pickr
-                                id="datetime"
-                                name="datetime"
-                                v-model="reservationDate.value"
-                                v-bind:class="{ err: !reservationDate.valid }"
-                                @change="reservationDate.valid = true"
-                                :config="reservationDate.config"
-                                class="form-control"
-                                placeholder="Select date"
+                            id="datetime"
+                            name="datetime"
+                            v-model="reservationDate.value"
+                            v-bind:class="{ err: !reservationDate.valid }"
+                            @change="reservationDate.valid = true"
+                            :config="reservationDate.config"
+                            class="form-control"
+                            placeholder="Select date"
                         >
                         </flat-pickr>
                     </div>
