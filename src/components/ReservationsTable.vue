@@ -30,7 +30,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { ReservationModel } from '@/models/reservation.model';
 
 @Component
-export default class ReservationList extends Vue {
+export default class ReservationsTable extends Vue {
   headers: string[] = ['nombre', 'apellidos', 'teléfono', 'fecha', 'comensales', 'comentarios'];
   @Prop() reservations!: ReservationModel[];
 }

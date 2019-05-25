@@ -13,7 +13,7 @@
         <div class='row' id='reservationsTableContainer'>
           <div class='col-xs-12'>
             <h3 v-if="!reservations || !reservations.length">No hay reservas que mostrar</h3>
-            <ReservationList v-else :reservations="reservations"/>
+            <ReservationsTable v-else :reservations="reservations"/>
           </div>
         </div>
         <div class='row'>
@@ -26,13 +26,13 @@
     </div>
 </template>
 <script>
-import * as axios from 'axios';
-import ReservationList from '@/components/ReservationList.vue'
+import axios from 'axios';
+import ReservationsTable from '@/components/ReservationsTable.vue'
 import { API_ENDPOINTS } from '../shared/network/endpoints';
 import { ReservationModel } from '../models/reservation.model';
 
 export default {
-    name: 'Landing',
+    name: 'ReservationList',
     data() {
         return {
             reservations: null,
@@ -41,7 +41,7 @@ export default {
         }
     },
     components: {
-        ReservationList
+        ReservationsTable
     },
     methods: {
         fetchReservations() {
