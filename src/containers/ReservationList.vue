@@ -59,6 +59,7 @@ export default {
         fetchReservations() {
             axios
                 .get([process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.RESERVATIONS_ALL].join(''))
+                .catch(err => window.console.log(err))
                 .then(res => this.reservations =
                     res.data && res.data.length ? res.data.map(res => new ReservationModel(res)) : []
                 );
@@ -66,6 +67,7 @@ export default {
         fetchReservations24() {
             axios
                 .get([process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.RESERVATIONS_24].join(''))
+                .catch(err => window.console.log(err))
                 .then(res => this.reservationsNext24 =
                     res.data && res.data.length ? res.data.map(res => new ReservationModel(res)) : []
                 );

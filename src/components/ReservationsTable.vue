@@ -23,6 +23,7 @@
           </button>
           <button
             class="btn btn-warning"
+            @click="goToEdit(reservation)"
           >
             Modificar
           </button>
@@ -67,13 +68,31 @@ export default class ReservationsTable extends Vue {
     )
   }
 
+  goToEdit(reservation: ReservationModel) {
+    this.$router.push(
+      {
+        path: '/edit',
+        query: {
+          id: reservation.id.toString(),
+          name: reservation.name,
+          surnames: reservation.surnames,
+          phone: reservation.phone,
+          date: reservation.dateReservation.toISOString(),
+          guests: reservation.guests.toString(),
+          comments: reservation.comments
+        }
+      }
+    )
+  }
+
   deleteTableEntry(reservationId: number) {
     const body = { id: reservationId };
     axios
       .post(
         [process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.RESERVATIONS_DELETE].join(''),
         body
-      ).then(res => {
+      )
+      .then(res => {
         if (res.data && res.data.message === 'reservation deleted') {
           this.reservations.splice(
             this.reservations.findIndex(reservation => reservation.id === reservationId),

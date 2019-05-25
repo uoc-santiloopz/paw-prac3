@@ -21,6 +21,11 @@ export default new Router({
       path: '/create',
       name: 'create',
       component: () => import('./containers/CreateReservationForm.vue')
+    },
+    {
+      path: '/edit',
+      name: 'edit',
+      component: () => import('./containers/CreateReservationForm.vue')
     }
   ]
 })

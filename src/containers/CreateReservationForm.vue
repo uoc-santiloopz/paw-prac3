@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <h1>Crear reserva</h1>
+                <h1>{{ isEditMode ? 'Editar' : 'Crear'}} reserva</h1>
             </div>
         </div>
         <div class="row">
@@ -90,7 +90,11 @@
                                 required
                         />
                     </div>
-                    <input class="btn btn-primary" name="submit" type="submit" value="Crear" />
+                    <input
+                            class="btn btn-primary"
+                            name="submit"
+                            type="submit"
+                            :value="isEditMode ? 'Editar' : 'Crear'" />
                 </form>
             </div>
         </div>
@@ -110,6 +114,7 @@
         name: 'CreateReservationForm',
         data () {
             return {
+                isEditMode: null,
                 errorMessage: '',
                 valid: false,
                 name: {
@@ -151,6 +156,12 @@
             onSubmit() {
                 this.errorMessage = '';
                 if(this.isFormValid()) {
+                    const url =
+                        [
+                            process.env.VUE_APP_API_BASE_URL,
+                            this.isEditMode ? API_ENDPOINTS.RESERVATIONS_UPDATE : API_ENDPOINTS.RESERVATIONS_CREATE
+                        ].join('');
+
                     const body = {
                         name: this.name.value,
                         surnames: this.surnames.value,
@@ -158,10 +169,13 @@
                         date: dayjs(this.reservationDate.value).format('YYYY-MM-DD HH:mm:ss'),
                         guests: this.guestsAmount.value
                     };
-                    axios.post(
-                        [process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.RESERVATIONS_CREATE].join(''),
-                        body
-                    )
+                    const config = this.isEditMode ? {
+                        params: {
+                            id: this.$route.query.id
+                        }
+                    } : undefined
+;
+                    axios.post(url, body, config)
                         .catch(err => window.console.log(err))
                         .then(() => this.$router.push('/'));
                 }
@@ -196,6 +210,16 @@
                     this.errorMessage = 'La reserva no se puede hacer con menos de un dia de antelación';
                 }
                 return this.reservationDate.valid;
+            }
+        },
+        created() {
+            this.isEditMode = this.$route.name === 'edit';
+            if (this.isEditMode) {
+                this.name.value = this.$route.query.name;
+                this.surnames.value = this.$route.query.surnames;
+                this.phone.value = this.$route.query.phone;
+                this.reservationDate.value = new Date(this.$route.query.date);
+                this.guestsAmount.value = parseInt(this.$route.query.guests);
             }
         }
     }
