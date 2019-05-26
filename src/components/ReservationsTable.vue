@@ -8,18 +8,34 @@
         type="text"
         class="form-control"
         placeholder="Quiero filtrar maddafak!"
-        @input="onFilterChange"
+        @input="onFilterNameSurnameChange"
       />
     </div>
-    <div class="form-group">
-      <label class="description">Desde:</label>
-      <flat-pickr
-        id="datetime"
-        name="datetime"
-        class="form-control"
-        placeholder="Select date"
-      >
-      </flat-pickr>
+    <div id="date-time-filter-container">
+      <div class="form-group">
+        <label class="description">Desde:</label>
+        <flat-pickr
+          id="datetimeFrom"
+          name="datetimeFrom"
+          class="form-control"
+          placeholder="Desde..."
+          v-model="filterValues.dateFilters.from"
+          :config="filterValues.dateFilters.config"
+        >
+        </flat-pickr>
+      </div>
+      <div class="form-group">
+        <label class="description">Hasta:</label>
+        <flat-pickr
+                id="datetimeTo"
+                name="datetimeTo"
+                class="form-control"
+                placeholder="Hasta..."
+                v-model="filterValues.dateFilters.to"
+                :config="filterValues.dateFilters.config"
+        >
+        </flat-pickr>
+      </div>
     </div>
     <table class="table">
       <thead>
@@ -28,7 +44,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(reservation, index) in filteredReservationsByNameAndSurname()" v-bind:key="index">
+      <tr v-for="(reservation, index) in reservationsFiltered()" v-bind:key="index">
         <td>{{reservation.name}}</td>
         <td>{{reservation.surnames}}</td>
         <td>{{reservation.phone}}</td>
@@ -65,16 +81,29 @@
 
 <script>
 import axios from 'axios';
+import dayjs from 'dayjs';
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import 'flatpickr/dist/themes/material_blue.css';
-import { ReservationModel } from '@/models/reservation.model';
+
 import { API_ENDPOINTS } from '@/shared/network/endpoints';
 
 export default  {
   data() {
     return {
-      filterValue: [],
+      filterValues: {
+        nameSurname: [],
+        dateFilters: {
+          from: null,
+          to: null,
+          config: {
+            altFormat: 'M	j, Y',
+            altInput: true,
+            dateFormat: 'Y-m-d H:i',
+            enableTime: true
+          }
+        },
+      },
       headers: ['nombre', 'apellidos', 'teléfono', 'fecha', 'comensales', 'comentarios']
     }
   },
@@ -131,34 +160,58 @@ export default  {
                 }
               });
     },
-    filteredReservationsByNameAndSurname() {
-      if (!(this.filterValue && this.filterValue.length)) {
-        return this.reservations;
+    filteredReservationsByNameAndSurname(reservations) {
+      if (this.filterValues.nameSurname && this.filterValues.nameSurname.length) {
+        return reservations.filter(reservation => {
+          if (this.filterValues.nameSurname.length === 1) {
+            return reservation.name.toLowerCase().includes(this.filterValues.nameSurname[0].toLowerCase()) ||
+                    reservation.surnames.toLowerCase().includes(this.filterValues.nameSurname[0].toLowerCase());
+          } else {
+            return reservation.name.toLowerCase().includes(this.filterValues.nameSurname[0].toLowerCase()) &&
+                    reservation.surnames.toLowerCase().includes(this.filterValues.nameSurname[1].toLowerCase());
+          }
+        })
+      } else {
+        return reservations;
       }
-      return this.reservations.filter(reservation => {
-        if (this.filterValue.length === 1) {
-          return  reservation.name.toLowerCase().includes(this.filterValue[0].toLowerCase()) ||
-                  reservation.surnames.toLowerCase().includes(this.filterValue[0].toLowerCase());
-        } else {
-          return  reservation.name.toLowerCase().includes(this.filterValue[0].toLowerCase()) &&
-                  reservation.surnames.toLowerCase().includes(this.filterValue[1].toLowerCase());
-        }
-      })
     },
-    onFilterChange(event) {
-      this.filterValue = [...event.target.value.split(' ')];
+    filteredReservationsByDate(reservations) {
+      if (this.filterValues.dateFilters.from || this.filterValues.dateFilters.to) {
+        if (this.filterValues.dateFilters.from) {
+          const from = dayjs(this.filterValues.dateFilters.from);
+          reservations = reservations.filter(reservation => reservation.dateReservation.isAfter(from));
+        }
+        if (this.filterValues.dateFilters.to) {
+          const to = dayjs(this.filterValues.dateFilters.to);
+          reservations = reservations.filter(reservation => reservation.dateReservation.isBefore(to));
+        }
+      }
+      return reservations;
+    },
+    reservationsFiltered() {
+      return this.filteredReservationsByNameAndSurname(this.filteredReservationsByDate(this.reservations));
+    },
+    onFilterNameSurnameChange(event) {
+      this.filterValues.nameSurname = [...event.target.value.split(' ')];
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
+  @import "../styles.css";
+
+  td {
+    text-align: center;
+  }
+  #date-time-filter-container {
+    display: flex;
+    .form-group:nth-child(2) {
+      margin-left: 16px;
+    }
+  }
   .buttons-actions--container {
     display: flex;
     flex-direction: column;
-  }
-  td {
-    text-align: center;
   }
 </style>

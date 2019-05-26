@@ -1,18 +1,18 @@
 <template>
     <div class='container'>
-        <div class='row'>
+        <div class='row push-bottom'>
           <div class='col-xs-12'>
             <h1>Listado de reservas {{ isNext24View ? 'en las próximas 24 horas'  :'' }}</h1>
           </div>
         </div>
-        <div class="row" v-if="isNext24View">
+        <div class="row push-bottom" v-if="isNext24View">
             <div class="col-xs-12">
                 <router-link to="/">
                     <button class="btn btn-primary">Volver</button>
                 </router-link>
             </div>
         </div>
-        <div class='row' v-else-if="reservationsNext24 && reservationsNext24.length">
+        <div class='row push-bottom' v-else-if="reservationsNext24 && reservationsNext24.length">
             <div class='col-xs-12'>
                 <router-link to="/next24">
                     <a>Próximas 24 horas</a>
@@ -99,3 +99,7 @@ export default {
     }
 }
 </script>
+
+<style>
+    @import "../styles.css";
+</style>
