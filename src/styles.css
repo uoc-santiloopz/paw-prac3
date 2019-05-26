@@ -13,3 +13,7 @@
 .push-left {
     margin-left: 16px;
 }
+
+.pointer {
+    cursor: pointer;
+}

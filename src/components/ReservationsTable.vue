@@ -40,7 +40,13 @@
     <table class="table">
       <thead>
       <tr scope="col">
-        <th v-for="(header, index) in headers" v-bind:key="index">{{header}}</th>
+        <th
+          v-for="(header, index) in headers"
+          v-bind:key="index"
+        >
+          {{header.name}}
+          <font-awesome-icon class="pointer" icon="sort" @click="tableSort(header)"/>
+        </th>
       </tr>
       </thead>
       <tbody>
@@ -85,8 +91,12 @@ import dayjs from 'dayjs';
 import flatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import 'flatpickr/dist/themes/material_blue.css';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faSort } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import { API_ENDPOINTS } from '@/shared/network/endpoints';
+
 
 export default  {
   data() {
@@ -104,12 +114,57 @@ export default  {
           }
         },
       },
-      headers: ['nombre', 'apellidos', 'teléfono', 'fecha', 'comensales', 'comentarios']
+      headers: [
+        {
+          name:'nombre',
+          sortAsc: false,
+          sortFunc: (arr, sortedAsc) => {
+            const ordered =
+              arr.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1);
+            return sortedAsc ? ordered.reverse() : ordered;
+          }
+        },
+        {
+          name:'apellidos',
+          sortAsc: false,
+          sortFunc: (arr, sortedAsc) => {
+            const ordered =
+              arr.sort((a, b) => (a.surnames.toLowerCase() > b.surnames.toLowerCase()) ? 1 : -1);
+            return sortedAsc ? ordered.reverse() : ordered;
+          }
+        },
+        {
+          name:'teléfono',
+          sortAsc: false,
+          sortFunc: (arr, sortedAsc) => {
+            const ordered = arr.sort((a, b) => (a.phone > b.phone) ? 1 : -1);
+            return sortedAsc ? ordered.reverse() : ordered;
+          }
+        },
+        {
+          name:'fecha',
+          sortAsc: false,
+          sortFunc: (arr, sortedAsc) => {
+            const ordered =
+              arr.sort((a, b) => (a.dateReservation.isAfter(b.dateReservation)) ? 1 : -1);
+            return sortedAsc ? ordered.reverse() : ordered;
+          }
+        },
+        {
+          name:'comensales',
+          sortAsc: false,
+          sortFunc: (arr, sortedAsc) => {
+            const ordered = arr.sort((a, b) => a.guests - b.guests);
+            return sortedAsc ? ordered.reverse() : ordered;
+          }
+        }
+      ]
     }
   },
   props: ['reservations'],
   components: {
-    flatPickr
+    flatPickr,
+    FontAwesomeIcon
   },
   methods: {
     goToDetails(reservation) {
@@ -148,8 +203,8 @@ export default  {
       const body = { id: reservationId };
       axios
               .post(
-                      [process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.RESERVATIONS_DELETE].join(''),
-                      body
+                [process.env.VUE_APP_API_BASE_URL, API_ENDPOINTS.RESERVATIONS_DELETE].join(''),
+                body
               )
               .then(res => {
                 if (res.data && res.data.message === 'reservation deleted') {
@@ -193,7 +248,14 @@ export default  {
     },
     onFilterNameSurnameChange(event) {
       this.filterValues.nameSurname = [...event.target.value.split(' ')];
+    },
+    tableSort(header) {
+      this.reservations = header.sortFunc(this.reservations, header.sortAsc);
+      header.sortAsc = !header.sortAsc;
     }
+  },
+  created() {
+    library.add(faSort);
   }
 }
 </script>
